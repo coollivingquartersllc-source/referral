@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confidential Referral Portal — Cool Living Quarters</title>
+  <link rel="icon" type="image/png" href="assets/clq.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy:    #00457C;
+      --navy-dk: #002f57;
+      --navy-lt: #1a6faa;
+      --sky:     #e8f4fd;
+      --white:   #ffffff;
+      --off:     #f7f9fc;
+      --gray:    #6b7280;
+      --gray-lt: #e5e7eb;
+      --text:    #1f2937;
+      --secure:  #065f46;
+      --secure-lt: #d1fae5;
+      --secure-border: #6ee7b7;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--white); color: var(--text); font-family: 'Lato', sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+    h1,h2,h3,h4 { font-family: 'Quicksand', sans-serif; font-weight: 700; color: var(--navy); line-height: 1.3; }
+    a { color: var(--navy); text-decoration: none; }
+    a:hover { color: var(--navy-lt); }
+
+    .top-bar { background: var(--navy); color: rgba(255,255,255,0.85); font-size: 0.85rem; padding: 0.5rem 0; text-align: center; font-family: 'Quicksand', sans-serif; font-weight: 500; letter-spacing: 0.03em; }
+    .top-bar a { color: rgba(255,255,255,0.85); font-weight: 600; }
+    .top-bar a:hover { color: #fff; }
+
+    header { background: var(--white); border-bottom: 2px solid var(--navy); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,69,124,0.08); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.5rem; max-width: 1140px; margin: 0 auto; }
+    .logo-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-wrap img { width: 56px; height: 56px; object-fit: contain; }
+    .logo-name { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--navy); letter-spacing: 0.02em; line-height: 1.1; }
+    .logo-tagline { font-size: 0.7rem; color: var(--gray); font-family: 'Quicksand', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+    nav ul { display: flex; list-style: none; gap: 0.25rem; align-items: center; }
+    nav ul a { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.88rem; color: var(--navy); padding: 0.45rem 0.9rem; border-radius: 6px; transition: background 0.2s, color 0.2s; }
+    nav ul a:hover { background: var(--sky); color: var(--navy-dk); }
+    .nav-cta { background: var(--navy) !important; color: #fff !important; border-radius: 6px !important; padding: 0.45rem 1.1rem !important; }
+    .nav-cta.active-cta { background: var(--secure) !important; }
+    .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.4rem; flex-direction: column; gap: 5px; }
+    .menu-toggle span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; }
+
+    .breadcrumb { background: var(--off); border-bottom: 1px solid var(--gray-lt); padding: 0.65rem 1.5rem; font-size: 0.82rem; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .breadcrumb .inner { max-width: 1140px; margin: 0 auto; display: flex; gap: 0.5rem; align-items: center; color: var(--gray); }
+    .breadcrumb a { color: var(--navy-lt); }
+    .breadcrumb .sep { color: var(--gray-lt); }
+
+    /* HERO — darker, more serious tone */
+    .page-hero { background: linear-gradient(135deg, #001e38 0%, var(--navy-dk) 55%, var(--navy) 100%); color: #fff; padding: 4rem 1.5rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; }
+    .secure-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.4); border-radius: 20px; padding: 0.3rem 0.9rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6ee7b7; margin-bottom: 1rem; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
+    .secure-badge svg { width: 14px; height: 14px; fill: #6ee7b7; }
+    .page-hero h1 { font-size: clamp(1.9rem, 5vw, 2.9rem); color: #fff; margin-bottom: 1rem; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    .page-hero p { font-size: 1.05rem; color: rgba(255,255,255,0.78); max-width: 620px; margin: 0 auto; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards; }
+
+    /* SECURE NOTICE */
+    .secure-notice { background: var(--secure-lt); border-top: 3px solid #059669; border-bottom: 1px solid var(--secure-border); padding: 1rem 1.5rem; }
+    .secure-notice-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; }
+    .secure-notice-inner svg { width: 20px; height: 20px; fill: #065f46; flex-shrink: 0; margin-top: 0.15rem; }
+    .secure-notice-inner p { color: var(--secure); margin: 0; }
+    .secure-notice-inner strong { font-family: 'Quicksand', sans-serif; }
+
+    /* WHO THIS IS FOR */
+    .audience-strip { background: var(--off); border-bottom: 1px solid var(--gray-lt); padding: 2.5rem 1.5rem; }
+    .audience-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    .audience-col h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .audience-col p, .audience-col li { font-size: 0.9rem; color: var(--gray); }
+    .audience-col ul { list-style: none; margin-top: 0.5rem; }
+    .audience-col ul li { padding: 0.2rem 0; padding-left: 1.2rem; position: relative; }
+    .audience-col ul li::before { content: '✓'; position: absolute; left: 0; color: #16a34a; font-weight: 700; }
+    .audience-col.not ul li::before { content: '✗'; color: #dc2626; }
+
+    /* SECTION LABEL */
+    .section-label { font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--navy-lt); margin-bottom: 0.5rem; display: block; }
+
+    /* FORM LAYOUT */
+    .referral-layout { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .referral-layout > .intro { margin-bottom: 2.5rem; }
+    .referral-layout > .intro h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .referral-layout > .intro p { color: var(--gray); font-size: 0.97rem; }
+
+    /* FORM SECTIONS */
+    .form-section { background: var(--white); border: 1.5px solid var(--gray-lt); border-radius: 14px; padding: 2rem; margin-bottom: 1.5rem; }
+    .form-section-title { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-lt); }
+    .form-section-num { width: 30px; height: 30px; background: var(--navy); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; font-size: 0.82rem; font-weight: 700; flex-shrink: 0; }
+    .form-section-title h3 { font-size: 1.05rem; color: var(--navy); margin: 0; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.84rem; color: var(--navy); margin-bottom: 0.4rem; letter-spacing: 0.02em; }
+    .form-group label .req { color: #dc2626; margin-left: 2px; }
+    .form-group label .tag { background: var(--sky); color: var(--navy-lt); font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 10px; margin-left: 0.4rem; font-weight: 600; letter-spacing: 0; }
+    .form-group label .conf-tag { background: var(--secure-lt); color: var(--secure); font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 10px; margin-left: 0.4rem; font-weight: 600; letter-spacing: 0; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--gray-lt); border-radius: 8px;
+      font-family: 'Lato', sans-serif; font-size: 0.92rem; color: var(--text); background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--navy-lt); box-shadow: 0 0 0 3px rgba(0,69,124,0.08);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .form-note { font-size: 0.8rem; color: var(--gray); margin-top: 0.35rem; }
+
+    /* FILE UPLOAD */
+    .upload-zone { border: 2px dashed var(--gray-lt); border-radius: 10px; padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.3s, background 0.3s; background: var(--off); position: relative; }
+    .upload-zone:hover { border-color: var(--navy-lt); background: var(--sky); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-zone svg { width: 36px; height: 36px; fill: var(--navy-lt); margin: 0 auto 0.75rem; display: block; }
+    .upload-zone p { font-family: 'Quicksand', sans-serif; font-size: 0.88rem; font-weight: 600; color: var(--navy-lt); }
+    .upload-zone .sub { font-size: 0.78rem; color: var(--gray); font-family: 'Lato', sans-serif; font-weight: 400; margin-top: 0.25rem; }
+    .file-list { list-style: none; margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .file-list li { background: var(--sky); border-radius: 6px; padding: 0.4rem 0.75rem; font-size: 0.82rem; color: var(--navy); font-family: 'Quicksand', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .file-list li::before { content: '📄'; }
+
+    /* CONSENT */
+    .consent-box { background: #f9fafb; border: 1.5px solid var(--gray-lt); border-radius: 10px; padding: 1.25rem 1.5rem; }
+    .consent-item { display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.75rem; }
+    .consent-item:last-child { margin-bottom: 0; }
+    .consent-item input[type="checkbox"] { width: 16px; height: 16px; margin-top: 0.3rem; accent-color: var(--navy); flex-shrink: 0; cursor: pointer; }
+    .consent-item label { font-size: 0.87rem; color: var(--text); cursor: pointer; }
+    .consent-item label a { color: var(--navy-lt); text-decoration: underline; }
+
+    /* SUBMIT */
+    .submit-area { background: linear-gradient(135deg, var(--navy-dk) 0%, var(--navy) 100%); border-radius: 14px; padding: 2rem; text-align: center; }
+    .submit-area p { color: rgba(255,255,255,0.75); font-size: 0.88rem; margin-bottom: 1.25rem; }
+    .btn-submit { background: #fff; color: var(--navy); font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; padding: 1rem 3rem; border-radius: 8px; border: none; cursor: pointer; letter-spacing: 0.03em; transition: background 0.25s, transform 0.2s; }
+    .btn-submit:hover { background: var(--sky); transform: translateY(-2px); }
+    .submit-secure-note { display: flex; align-items: center; gap: 0.4rem; justify-content: center; margin-top: 0.75rem; font-size: 0.78rem; color: rgba(255,255,255,0.5); font-family: 'Quicksand', sans-serif; }
+    .submit-secure-note svg { width: 14px; height: 14px; fill: rgba(255,255,255,0.5); }
+
+    /* SUCCESS */
+    .success-panel { display: none; max-width: 600px; margin: 4rem auto; padding: 0 1.5rem; text-align: center; }
+    .success-panel .icon-wrap { width: 72px; height: 72px; background: var(--secure-lt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+    .success-panel .icon-wrap svg { width: 36px; height: 36px; fill: #059669; }
+    .success-panel h2 { color: var(--secure); font-size: 1.7rem; margin-bottom: 0.75rem; }
+    .success-panel p { color: var(--gray); font-size: 0.97rem; margin-bottom: 0.5rem; }
+    .success-panel .ref-num { font-family: 'Quicksand', sans-serif; font-size: 1rem; font-weight: 700; color: var(--navy); background: var(--sky); padding: 0.5rem 1.25rem; border-radius: 8px; display: inline-block; margin: 0.75rem 0; letter-spacing: 0.05em; }
+
+    /* SIDEBAR HELP */
+    .help-strip { background: var(--off); border-top: 1px solid var(--gray-lt); padding: 3rem 1.5rem; }
+    .help-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .help-card { text-align: center; }
+    .help-card svg { width: 32px; height: 32px; fill: var(--navy); margin: 0 auto 0.75rem; display: block; }
+    .help-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .help-card p { font-size: 0.85rem; color: var(--gray); }
+    .help-card a { color: var(--navy-lt); font-weight: 600; }
+
+    footer { background: var(--navy-dk); color: rgba(255,255,255,0.6); text-align: center; padding: 1.5rem; font-size: 0.82rem; font-family: 'Quicksand', sans-serif; }
+    footer a { color: rgba(255,255,255,0.6); }
+    footer a:hover { color: #fff; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: flex; }
+      nav { display: none; width: 100%; }
+      nav.open { display: block; position: absolute; top: 100%; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--gray-lt); box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 1rem; }
+      nav.open ul { flex-direction: column; gap: 0.25rem; }
+      nav.open ul a { display: block; padding: 0.65rem 1rem; }
+      .header-inner { position: relative; flex-wrap: wrap; }
+      .audience-inner { grid-template-columns: 1fr; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+      .help-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+    @media (max-width: 480px) { .logo-tagline { display: none; } }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    24/7 Referrals &amp; Intake: <a href="tel:8442665226">(844) 266-5226</a> &nbsp;|&nbsp; info@coollivingquartersfc.com &nbsp;|&nbsp; Houston, Texas
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo-wrap">
+        <img src="assets/clq.png" alt="Cool Living Quarters Logo"/>
+        <div>
+          <div class="logo-name">Cool Living Quarters</div>
+          <div class="logo-tagline">Compassionate Care At Its Finest</div>
+        </div>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      <nav id="mainNav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Our Services</a></li>
+          <li><a href="why-choose-us.html">Why Choose Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="referral.html" class="nav-cta active-cta">Make a Referral</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="breadcrumb">
+    <div class="inner">
+      <a href="index.html">Home</a>
+      <span class="sep">›</span>
+      <span>Confidential Referral Portal</span>
+    </div>
+  </div>
+
+  <section class="page-hero">
+    <div class="secure-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      Confidential &amp; Secure
+    </div>
+    <h1>Referral Portal</h1>
+    <p>For licensed caseworkers and placement professionals only. Submit a youth's confidential clinical files for admission consideration at Cool Living Quarters.</p>
+  </section>
+
+  <!-- SECURE NOTICE -->
+  <div class="secure-notice">
+    <div class="secure-notice-inner">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      <p><strong>This is a confidential intake portal.</strong> All information submitted here is protected and used solely for placement consideration. Do not share access to this portal with unauthorized individuals. All submissions are reviewed by our clinical intake team within 24 hours.</p>
+    </div>
+  </div>
+
+  <!-- WHO THIS IS FOR -->
+  <div class="audience-strip">
+    <div class="audience-inner">
+      <div class="audience-col reveal">
+        <h3>✅ This portal is for:</h3>
+        <ul>
+          <li>Texas DFPS caseworkers</li>
+          <li>Child Protective Services (CPS) staff</li>
+          <li>Juvenile probation officers</li>
+          <li>Court-appointed placement specialists</li>
+          <li>Licensed child-placing agencies (CPAs)</li>
+          <li>Authorized STAR Health / MCO representatives</li>
+        </ul>
+      </div>
+      <div class="audience-col not reveal" style="transition-delay:0.1s">
+        <h3>❌ This portal is NOT for:</h3>
+        <ul>
+          <li>General public inquiries</li>
+          <li>Parents or family members acting independently</li>
+          <li>Youth seeking self-placement</li>
+          <li>Unauthorized third parties</li>
+        </ul>
+        <p style="margin-top:0.75rem;">For general questions, please use our <a href="contact.html" style="color:var(--navy-lt); font-weight:600;">Contact page →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM + SUCCESS -->
+  <div id="formContainer">
+    <div class="referral-layout">
+      <div class="intro reveal">
+        <span class="section-label">Confidential Referral Submission</span>
+        <h2>Youth Referral Form</h2>
+        <p>Complete all required fields. You will receive a confirmation with a reference number upon submission. Our clinical intake team will contact you within 24 hours. For urgent placements, please also call <a href="tel:8442665226" style="font-weight:700;">(844) 266-5226</a> after submitting.</p>
+      </div>
+
+      <!-- SECTION 1: CASEWORKER INFO -->
+      <div class="form-section reveal">
+        <div class="form-section-title">
+          <div class="form-section-num">1</div>
+          <h3>Placing Professional Information</h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="cw_first" placeholder="First name"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" id="cw_last" placeholder="Last name"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Title / Role <span class="req">*</span></label>
+            <select id="cw_role">
+              <option value="">— Select role —</option>
+              <option>DFPS Caseworker</option>
+              <option>CPS Supervisor</option>
+              <option>Juvenile Probation Officer</option>
+              <option>Child-Placing Agency (CPA) Staff</option>
+              <option>MCO / STAR Health Representative</option>
+              <option>Court-Appointed Placement Specialist</option>
+              <option>Other Licensed Professional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Agency / Organization <span class="req">*</span></label>
+            <input type="text" id="cw_agency" placeholder="Agency or organization name"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Work Phone <span class="req">*</span></label>
+            <input type="tel" id="cw_phone" placeholder="(713) 000-0000"/>
+          </div>
+          <div class="form-group">
+            <label>Work Email <span class="req">*</span></label>
+            <input type="email" id="cw_email" placeholder="name@agency.gov"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>License or Employee ID Number <span class="tag">Recommended</span></label>
+          <input type="text" id="cw_license" placeholder="For verification purposes"/>
+        </div>
+      </div>
+
+      <!-- SECTION 2: YOUTH INFO (CONFIDENTIAL) -->
+      <div class="form-section reveal" style="transition-delay:0.05s">
+        <div class="form-section-title">
+          <div class="form-section-num">2</div>
+          <h3>Youth Information <span style="font-size:0.78rem; color:var(--secure); background:var(--secure-lt); padding:0.15rem 0.6rem; border-radius:8px; font-family:'Quicksand',sans-serif; font-weight:600; margin-left:0.5rem;">Confidential</span></h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Youth First Name <span class="req">*</span> <span class="conf-tag">Confidential</span></label>
+            <input type="text" id="y_first" placeholder="First name"/>
+          </div>
+          <div class="form-group">
+            <label>Youth Last Name <span class="req">*</span> <span class="conf-tag">Confidential</span></label>
+            <input type="text" id="y_last" placeholder="Last name"/>
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input type="date" id="y_dob"/>
+          </div>
+          <div class="form-group">
+            <label>Gender Identity <span class="req">*</span></label>
+            <select id="y_gender">
+              <option value="">— Select —</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Non-binary / Gender non-conforming</option>
+              <option>Prefer not to disclose</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>DFPS / Case ID <span class="req">*</span></label>
+            <input type="text" id="y_caseid" placeholder="Case or client ID"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Current Placement Type <span class="req">*</span></label>
+            <select id="y_current">
+              <option value="">— Select current placement —</option>
+              <option>No current placement (emergency)</option>
+              <option>Foster home</option>
+              <option>Residential facility</option>
+              <option>Psychiatric hospital</option>
+              <option>Juvenile detention / correctional</option>
+              <option>Transitional housing</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Requested Program Track <span class="req">*</span></label>
+            <select id="y_program">
+              <option value="">— Select program —</option>
+              <option>High-Acuity Residential Treatment (RTC)</option>
+              <option>Crisis Stabilization Placement</option>
+              <option>Human Trafficking Recovery Track</option>
+              <option>Unsure — requesting clinical consultation</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Primary Diagnosis / Clinical Concerns <span class="req">*</span> <span class="conf-tag">Confidential</span></label>
+          <textarea id="y_diagnosis" placeholder="List primary diagnoses, behavioral concerns, medication needs, known triggers, trauma history summary, or other relevant clinical information..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Human Trafficking Involvement <span class="req">*</span></label>
+          <select id="y_ht">
+            <option value="">— Select —</option>
+            <option>Confirmed HT survivor</option>
+            <option>Suspected / at-risk</option>
+            <option>No known HT involvement</option>
+            <option>Unknown / under investigation</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prior Crisis Incidents or Safety Concerns <span class="conf-tag">Confidential</span></label>
+          <textarea id="y_safety" placeholder="Describe any recent crisis incidents, hospitalizations, self-harm, aggression, elopement history, or other safety considerations..."></textarea>
+          <p class="form-note">This information is critical for clinical intake review and staffing preparation.</p>
+        </div>
+      </div>
+
+      <!-- SECTION 3: PLACEMENT DETAILS -->
+      <div class="form-section reveal" style="transition-delay:0.1s">
+        <div class="form-section-title">
+          <div class="form-section-num">3</div>
+          <h3>Placement &amp; Timeline Details</h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Requested Admission Date <span class="req">*</span></label>
+            <input type="date" id="p_date"/>
+          </div>
+          <div class="form-group">
+            <label>Placement Urgency <span class="req">*</span></label>
+            <select id="p_urgency">
+              <option value="">— Select —</option>
+              <option>Emergency — within 24 hours</option>
+              <option>Urgent — within 72 hours</option>
+              <option>Standard — within 1 week</option>
+              <option>Planned — more than 1 week</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Authorization / Funding Source <span class="req">*</span></label>
+          <select id="p_funding">
+            <option value="">— Select —</option>
+            <option>DFPS / State funded</option>
+            <option>STAR Health / MCO</option>
+            <option>Medicaid</option>
+            <option>Private pay</option>
+            <option>Awaiting authorization</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Additional Notes or Special Considerations</label>
+          <textarea id="p_notes" placeholder="Any additional context, placement conditions, court orders, or other information our team should know..."></textarea>
+        </div>
+      </div>
+
+      <!-- SECTION 4: FILE UPLOAD -->
+      <div class="form-section reveal" style="transition-delay:0.15s">
+        <div class="form-section-title">
+          <div class="form-section-num">4</div>
+          <h3>Clinical File Uploads <span style="font-size:0.78rem; color:var(--secure); background:var(--secure-lt); padding:0.15rem 0.6rem; border-radius:8px; font-family:'Quicksand',sans-serif; font-weight:600; margin-left:0.5rem;">Confidential</span></h3>
+        </div>
+        <p style="font-size:0.9rem; color:var(--gray); margin-bottom:1.25rem;">Upload any supporting clinical documents. All files are encrypted and accessible only to our clinical intake team.</p>
+        <div class="upload-zone" id="uploadZone">
+          <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+          <p>Drag &amp; drop files here or click to browse</p>
+          <p class="sub">Accepted: PDF, DOC, DOCX, JPG, PNG · Max 25MB per file</p>
+          <input type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFiles(this)"/>
+        </div>
+        <ul class="file-list" id="fileList"></ul>
+        <p class="form-note" style="margin-top:0.75rem;">Suggested documents: psychological evaluations, psychiatric assessments, prior treatment summaries, court orders, medication lists, IEP/educational records.</p>
+      </div>
+
+      <!-- SECTION 5: CONSENT -->
+      <div class="form-section reveal" style="transition-delay:0.2s">
+        <div class="form-section-title">
+          <div class="form-section-num">5</div>
+          <h3>Authorization &amp; Consent</h3>
+        </div>
+        <div class="consent-box">
+          <div class="consent-item">
+            <input type="checkbox" id="c1"/>
+            <label for="c1">I am a licensed professional authorized to submit this referral on behalf of the youth named above, and I have the appropriate legal authority to share the clinical information provided. <span class="req">*</span></label>
+          </div>
+          <div class="consent-item">
+            <input type="checkbox" id="c2"/>
+            <label for="c2">I understand that the information submitted here will be used solely for the purpose of evaluating placement eligibility at Cool Living Quarters and will be kept strictly confidential in accordance with applicable federal and Texas state privacy laws (HIPAA, FERPA, DFPS regulations). <span class="req">*</span></label>
+          </div>
+          <div class="consent-item">
+            <input type="checkbox" id="c3"/>
+            <label for="c3">I acknowledge that submission of this referral does not guarantee placement, and that Cool Living Quarters will contact me within 24 hours to discuss next steps. <span class="req">*</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="submit-area reveal" style="transition-delay:0.25s">
+        <p>By submitting this referral, you confirm all information is accurate and that you are authorized to share it. Our intake team will review your submission and reach out within 24 hours.</p>
+        <button class="btn-submit" onclick="submitReferral()">Submit Confidential Referral</button>
+        <div class="submit-secure-note">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          Encrypted &amp; Confidential · HIPAA-Aware Handling
+        </div>
+      </div>
+
+    </div><!-- /referral-layout -->
+  </div><!-- /formContainer -->
+
+  <!-- SUCCESS STATE -->
+  <div class="success-panel" id="successPanel">
+    <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div>
+    <h2>Referral Submitted</h2>
+    <p>Your confidential referral has been received by our clinical intake team.</p>
+    <div class="ref-num" id="refNum">REF-XXXXXX</div>
+    <p>Please save your reference number above. A member of our team will contact you within <strong>24 hours</strong> at the phone number or email provided.</p>
+    <p style="margin-top:0.75rem;">For urgent placements, please also call <a href="tel:8442665226" style="font-weight:700; color:var(--navy-lt);">(844) 266-5226</a> to speak with our on-call intake coordinator.</p>
+  </div>
+
+  <!-- HELP STRIP -->
+  <div class="help-strip">
+    <div class="help-inner">
+      <div class="help-card reveal">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <h4>Urgent Placement?</h4>
+        <p>Call our intake line directly: <a href="tel:8442665226">(844) 266-5226</a>. Available 24/7 for emergency placement needs.</p>
+      </div>
+      <div class="help-card reveal" style="transition-delay:0.1s">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+        <h4>Program Availability</h4>
+        <p>Contact us to check current bed availability before submitting a formal referral.</p>
+      </div>
+      <div class="help-card reveal" style="transition-delay:0.2s">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <h4>Request a Tour</h4>
+        <p>Placing agencies and caseworkers are welcome to <a href="contact.html">schedule a home visit</a> before placement.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 <a href="index.html">Kevin Marts</a> · All Rights Reserved · Houston, TX · <a href="tel:8442665226">(844) 266-5226</a> · info@coollivingquartersfc.com</p>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('mainNav');
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    reveals.forEach(r => obs.observe(r));
+
+    function handleFiles(input) {
+      const list = document.getElementById('fileList');
+      list.innerHTML = '';
+      Array.from(input.files).forEach(f => {
+        const li = document.createElement('li');
+        li.textContent = f.name + ' (' + (f.size / 1024).toFixed(0) + ' KB)';
+        list.appendChild(li);
+      });
+    }
+
+    // Drag over visual feedback
+    const zone = document.getElementById('uploadZone');
+    if (zone) {
+      zone.addEventListener('dragover', () => zone.style.borderColor = 'var(--navy)');
+      zone.addEventListener('dragleave', () => zone.style.borderColor = '');
+      zone.addEventListener('drop', () => zone.style.borderColor = '');
+    }
+
+    function submitReferral() {
+      const required = [
+        { id: 'cw_first', el: null }, { id: 'cw_last' }, { id: 'cw_role' },
+        { id: 'cw_agency' }, { id: 'cw_phone' }, { id: 'cw_email' },
+        { id: 'y_first' }, { id: 'y_last' }, { id: 'y_dob' }, { id: 'y_gender' },
+        { id: 'y_caseid' }, { id: 'y_current' }, { id: 'y_program' },
+        { id: 'y_diagnosis' }, { id: 'y_ht' }, { id: 'p_date' }, { id: 'p_urgency' },
+        { id: 'p_funding' }
+      ];
+      let valid = true;
+      required.forEach(r => {
+        const el = document.getElementById(r.id);
+        if (el && !el.value.trim()) { el.style.borderColor = '#dc2626'; valid = false; }
+        else if (el) { el.style.borderColor = ''; }
+      });
+      const checkboxes = ['c1','c2','c3'];
+      checkboxes.forEach(id => {
+        const cb = document.getElementById(id);
+        if (!cb.checked) { cb.parentElement.style.background = '#fef2f2'; valid = false; }
+        else { cb.parentElement.style.background = ''; }
+      });
+      if (!valid) {
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+        return;
+      }
+      // Generate reference number
+      const ref = 'CLQ-' + Date.now().toString(36).toUpperCase().slice(-6);
+      document.getElementById('refNum').textContent = ref;
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('successPanel').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
